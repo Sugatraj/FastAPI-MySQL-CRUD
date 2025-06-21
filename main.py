@@ -26,6 +26,10 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+@app.get('/', status_code=status.HTTP_200_OK)
+async def welcome():
+    return {'welcome to this fast api app'}
+
 @app.post('/posts', status_code=status.HTTP_201_CREATED)
 async def create_post(post:PostBase, db:db_dependency):
     db_post=models.Post(**post.dict())
@@ -46,7 +50,7 @@ async def delete_post(post_id : int, db: db_dependency):
     if db_post is None:
         raise HTTPException(status_code=404, detail="post not found")
     db.delete(db_post)
-    db.commit
+    db.commit()
     return{"message":"post has been deleted"}
     
 
